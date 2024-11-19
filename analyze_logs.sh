@@ -1,10 +1,10 @@
 #!/bin/bash
 
 filename="access.log";
-report="report.txt";
+reportname="report.txt";
 mydir=$(pwd)
-fullnamepath=$mydir"/"$filename;
-fullreportpath=$mydir"/"$report;
+fullfilepath=$mydir"/"$filename;
+fullreportpath=$mydir"/"$reportname;
 
 if [ ! -e $filename ]; then
     cat > $filename <<EOL
@@ -17,21 +17,21 @@ if [ ! -e $filename ]; then
 EOL
 fi
 
-if [ ! -e $report ]; then
-    touch $report;
+if [ ! -e $reportname ]; then
+    touch $reportname;
 fi
 
 
-printf "Отчет о логе веб-сервера\n" > $report;
-printf "========================\n" >> $report;
+printf "Отчет о логе веб-сервера\n" > $reportname;
+printf "========================\n" >> $reportname;
 
-awk 'BEGIN{cnt=0} $1~/^192\./{cnt++} END{print "Общее количество запросов: ", cnt}' $fullnamepath >> $fullreportpath
-awk '$1~/^192\./{cnt[$1]++} END{for(i in cnt) {unq++;} print "Количество уникальных IP адресов: ", unq}' $fullnamepath >> $fullreportpath
+awk 'BEGIN{cnt=0} $1~/^192\./{cnt++} END{print "Общее количество запросов: ", cnt}' $fullfilepath >> $fullreportpath
+awk '$1~/^192\./{cnt[$1]++} END{for(i in cnt) {unq++;} print "Количество уникальных IP адресов: ", unq}' $fullfilepath >> $fullreportpath
 
-printf "\n\nКоличество запросов по методам:\n" >> $report;
+printf "\n\nКоличество запросов по методам:\n" >> $reportname;
 
-awk 'BEGIN{cnt=0} $6~/GET/{cnt++} END{print "    ",cnt," GET"}' $fullnamepath >> $fullreportpath
-awk 'BEGIN{cnt=0} $6~/POST/{cnt++} END{print "    ",cnt," POST\n\n"}' $fullnamepath >> $fullreportpath
-awk '$1~/^192\./{cnt[$7]++} END{for(i in cnt)  print "Самый популярный URL: ", cnt[i], i}' $fullnamepath | sort -nr | head -n 1 >> $fullreportpath
+awk 'BEGIN{cnt=0} $6~/GET/{cnt++} END{print "    ",cnt," GET"}' $fullfilepath >> $fullreportpath
+awk 'BEGIN{cnt=0} $6~/POST/{cnt++} END{print "    ",cnt," POST\n\n"}' $fullfilepath >> $fullreportpath
+awk '$1~/^192\./{cnt[$7]++} END{for(i in cnt)  print "Самый популярный URL: ", cnt[i], i}' $fullfilepath | sort -nr | head -n 1 >> $fullreportpath
 
-printf "Отчет сохранен в файл $report\n";
+printf "Отчет сохранен в файл $reportname\n";
